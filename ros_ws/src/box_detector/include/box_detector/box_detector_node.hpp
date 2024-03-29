@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#include "box_detector/box_detector.hpp"
 #include "box_detector/box.hpp"
 #include "box_detector/pnp_solver.hpp"
 #include "auto_aim_interfaces/msg/boxs.hpp"
@@ -34,12 +35,12 @@ private:
     void ImageCallback(const sensor_msgs::msg::Image::SharedPtr _ros_image);
     void createDebugPublishers();
     void destroyDebugPublishers();
-    // std::unique_ptr<Box_Detector> initDetector();
+    std::unique_ptr<Box_Detector> initDetector();
     std::vector<Box> detectBoxs(const sensor_msgs::msg::Image::ConstSharedPtr & img_msg);
     void publishMarkers();
 
-    // Energy_leaf Detector
-    // std::unique_ptr<Box_Detector>detector_;
+    // Enginner_box Detector
+    std::unique_ptr<Box_Detector> detector_;
 
     // Detected box publisher
     auto_aim_interfaces::msg::Boxs boxs_msg_;
