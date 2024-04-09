@@ -27,6 +27,18 @@ include_directories(
   include/box_detector/
 
 )
+
+#include_directories(
+#  ${OpenCV_INCLUDE_DIRS}
+#  ${CMAKE_CURRENT_SOURCE_DIR}
+#  ${CMAKE_CURRENT_BINARY_DIR}
+#  /opt/intel/openvino_2023/runtime/include/ie/
+#  /opt/intel/openvino_2023/runtime/include/ngraph/
+#  /opt/intel/openvino_2023/runtime/include/openvino/
+#  include/box_detector/
+#
+#)
+
 set(CMAKE_PREFIX_PATH  /opt/openvino/runtime)
 
 find_package(ament_cmake_auto REQUIRED)

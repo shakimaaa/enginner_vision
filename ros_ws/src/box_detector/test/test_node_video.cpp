@@ -54,4 +54,50 @@ private:
  
 };
 
+TEST(box_detector, test_node_video)
+{
+#ifndef VIDEO
+#define VIDEO
+#endif
+#ifndef TEST_DIR
+#define TEST_DIR
+#endif
+    rclcpp::NodeOptions options;
+
+    auto node = std::make_shared<rm_auto_box::BoxDetector>(options);
+    auto test_node = std::make_shared<Test_node>(options);
+    std::string video_name[] = {"blue.mp4", "red.mp4"};
+    std::string video_path = std::string(TEST_DIR) + "/video/" + video_name[0];
+    cv::VideoCapture cap(video_path);
+    cv::Mat bin;
+    while (true)
+    {
+        rclcpp::spin_some(node);
+        rclcpp::spin_some(test_node);
+        cv::Mat frame;
+        cap >> frame;
+        if (frame.empty())
+            break;
+        cv::imshow("src", frame);
+        cv::waitKey(10);
+        cv::Mat color_frame = frame.clone();
+        color_frame = node->VideoTest(color_frame, bin);
+        cv::circle(color_frame, test_node->pre_Point, 5, cv::Scalar(0, 0, 255), -1);
+        cv::imshow("color_frame", color_frame);
+        cv::waitKey(10);
+        cv::imshow("bin", bin);
+        cv::waitKey(10);
+    }
+    std::cout << "avg latency:" << node->sum_latency / node->count << std::endl;
+}
+
+int main(int argc, char **argv)
+{
+    testing::InitGoogleTest(&argc, argv);
+    rclcpp::init(argc, argv);
+    auto result = RUN_ALL_TESTS();
+    rclcpp::shutdown();
+    return result;
+}
+
 

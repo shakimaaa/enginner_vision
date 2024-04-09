@@ -1,5 +1,6 @@
 #include "box_detector/box_detector_node.hpp"
 #include "geometry_msgs/msg/point.hpp"
+#include "opencv2/opencv.hpp"
 namespace rm_auto_box
 {
   BoxDetector::BoxDetector(const rclcpp::NodeOptions &options)
@@ -40,6 +41,26 @@ namespace rm_auto_box
         std::bind(&BoxDetector::ImageCallback, this, std::placeholders::_1));
     boxs_pub_ = this->create_publisher<auto_aim_interfaces::msg::Boxs>("/detector/boxs", rclcpp::SensorDataQoS());
   } 
+
+  cv::Mat BoxDetector::VideoTest(cv::Mat &img, cv::Mat &bin)
+  {
+    boxs_msg_.boxs.clear();
+    cv::Mat result_img = img.clone();
+    boxs_msg_.header.stamp = this->now();
+    auto final_time = this->now();
+    auto boxs = detector_->detect(img);
+    auto latency = (this->now() - final_time).seconds() * 1000;
+    std::stringstream latency_ss;
+    latency_ss << "Latency: " << latency << "ms" << std::endl; // 计算图像处理的延迟输出到日志中
+    auto latency_s = latency_ss.str();
+    std::cout << latency_s << std::endl;
+    sum_latency += latency;
+    count++;
+    detector_->drawRuselt(result_img);
+    cv::putText(
+        result_img, latency_s, cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(0, 255, 0), 2);
+    return result_img;
+  }
 
   void BoxDetector::ImageCallback(const sensor_msgs::msg::Image::SharedPtr img_msg)
   {
