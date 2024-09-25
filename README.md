@@ -3,7 +3,9 @@
 
 ![识别效果图](./img/box.jpg)
 
-# 安装openvion
+# 安装OpenVino（Running Time 和 Develop Toolkit都要安装）
+
+```SH
 # Running Time
 sudo mkdir /opt/intel
 
@@ -27,3 +29,15 @@ echo 'source /opt/intel/openvino_2023/setupvars.sh' >> ~/.bashrc
 
 python3 -m pip install --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
 pip install openvino-dev==2023.0.1 -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+```
+
+---
+
+## 使用OpenVino将onnx模型转换成ir模型
+
+```SH
+mo --input_model onnx模型的文件路径 --mean_values [103.53,116.28,123.675] --scale_values [57.375,57.12,58.395] --output output --output_dir 输出到的文件夹
+```
+
+会生成.bin和.xml文件，使用时将两个文件放在同一个文件夹里面
